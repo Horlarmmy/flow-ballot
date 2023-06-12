@@ -1,31 +1,36 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 // Import methods from FCL
-import { unauthenticate, logIn, account, query, config } from "@onflow/fcl";
-
-// Specify the API endpoint - this time we will use Testnet
-const api = "https://rest-testnet.onflow.org";
-
-// This is the endpoint, which will be responsible for wallet authorization
-const handshake = "https://flow-wallet-testnet.blocto.app/authn";
-
-// Configure FCL to use mainnet as the access node
-config()
-  // connect to Flow testnet
-  .put("accessNode.api", api)
-  .put("challenge.handshake", handshake);
-
+import { unauthenticate, logIn, account, currentUser, query } from "@onflow/fcl";
+import config  from './config';
 
 
 const Header = () => {
     const [walletConnected, setWalletConnected] = useState(false);
     const [userAddress, setUserAddress] = useState('');
     const [userBalance, setUserBalance] = useState('');
+    const [user, setUser] = useState({loggedIn: null})
+
+    useEffect(() => currentUser.subscribe(setUser), [])
+
+    // const AuthedState = () => {
+    //     return (
+    //     <div>
+    //         <div>Address: {user?.addr ?? "No Address"}</div>
+    //         <button onClick={fcl.unauthenticate}>Log Out</button>
+    //     </div>
+    //     )
+    // }
+
+    // const UnauthenticatedState = () => {
+    //     return (
+    //     <div>
+    //         <button onClick={fcl.logIn}>Log In</button>
+    //         <button onClick={fcl.signUp}>Sign Up</button>
+    //     </div>
+    //     )
+    // }
 
     const connectWallet = async () => {
-        console.clear();
-      
-        // just in case we have authenticated user, we will log him out first
-        await unauthenticate();
       
         // calling "logIn" will invoke "Sign in with Blocto - Testnet" popup
         const wallet = await logIn();
@@ -36,7 +41,6 @@ const Header = () => {
         const flowBalance = result.balance / Math.pow(10, 8);
         console.log({ flowBalance });
         setWalletConnected(true);
-        setUserAddress(wallet.addr);
         setUserBalance(flowBalance);
 
     
@@ -52,10 +56,10 @@ const Header = () => {
           <a href="/proposals" style={styles.navLink}>Proposals</a>
           <a href="/about" style={styles.navLink}>About</a>
         </nav>
-        {walletConnected ? (
+        {user.loggedIn ? (
           <div style={styles.walletInfo}>
-            <p style={styles.userAddress}>{userAddress}</p>
-            <p style={styles.userBalance}>{userBalance}</p>
+            <p style={styles.userAddress}>Address: {user?.addr ?? "No Address"}{userAddress}</p>
+            <p style={styles.userBalance}>Bal: {user.balance}</p>
           </div>
         ) : (
           <button onClick={connectWallet} style={styles.connectWalletButton}>Connect Wallet</button>
@@ -124,7 +128,7 @@ const styles = {
       walletInfo: {
         display: 'flex',
         flexDirection: 'column',
-        alignItems: 'center',
+        alignItems: 'left',
       },
       userAddress: {
         fontSize: '16px',
@@ -136,6 +140,7 @@ const styles = {
         fontSize: '14px',
         color: '#ffffff',
         margin: '0',
+        fontWeight: 'bold',
       },
 }
 

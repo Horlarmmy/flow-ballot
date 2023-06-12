@@ -1,0 +1,30 @@
+{
+    "networks": {
+          "emulator": "127.0.0.1:3569",
+          "mainnet": "access.mainnet.nodes.onflow.org:9000",
+          "sandboxnet": "access.sandboxnet.nodes.onflow.org:9000",
+          "testnet": "access.devnet.nodes.onflow.org:9000"
+      },
+      "accounts": {
+          "my-testnet-account": {
+              "address": "0x0487e1d4223c8002",
+              "key": "fe168e9fbd23b4c47dce79d64481325dd4a0373b61840ec0aaddccca9d8d8a9a"
+            }
+              
+      },
+    
+    "contracts": {
+      "VotingContract": {
+          "source": "./contracts/Contract1.cdc",
+          "aliases": {
+              "testnet": "0x0487e1d4223c8002"
+          }
+      }
+    },
+    "deployments": {
+      "testnet": {
+          "my-testnet-account": ["VotingContract"]
+        }
+    }
+  }
+  

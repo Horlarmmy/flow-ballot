@@ -2,6 +2,7 @@ import React from 'react';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 
+
 const LandingPage = () => {
   return (
     <div className="landing-page" style={styles.container}>
@@ -10,7 +11,9 @@ const LandingPage = () => {
         <h1 style={styles.heading}>Welcome to the Majority Voting App</h1>
         <p style={styles.paragraph}>FlowBallot is a decentralized majority voting application built on the Flow blockchain. It provides a transparent and secure platform for organizations and communities to conduct fair and democratic voting processes. With FlowBallot, members can actively participate in decision-making by casting their votes on various proposals.</p>
         <p style={styles.paragraph}>Start voting on proposals and see the results!</p>
-        <button style={styles.button}>Get Started</button>
+        <button style={styles.button} onClick={() => {
+    window.location.href = "/proposals";
+  }}>Get Started</button>
       </main>
       <Footer />
     </div>

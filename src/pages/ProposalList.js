@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
+import { query, currentUser } from "@onflow/fcl";
+import config  from '../components/config';
 
 const ProposalList = () => {
   const [proposals, setProposals] = useState([]);
@@ -9,32 +11,34 @@ const ProposalList = () => {
   const [proposalOptions, setProposalOptions] = useState('');
   const [walletConnected, setWalletConnected] = useState(false);
   const [selectedProposal, setSelectedProposal] = useState(null);
-
+  const [user, setUser] = useState({loggedIn: null})
+  useEffect(() => currentUser.subscribe(setUser), [])
   useEffect(() => {
-    // Fetch the proposals from the contract or API
     const fetchProposals = async () => {
-      // Implement your logic here to fetch the proposals from the contract or API
-      // For example, you can use FCL or other libraries to interact with the Flow blockchain
+      try {
+        const proposal = await query({
+          cadence: `
+          import MajorityVoting from 0xVoting
 
-      // Dummy data for demonstration purposes
-      const dummyProposals = [
-        { id: 1, name: 'Proposal 1', options: ['Option 1', 'Option 2', 'Option 3'] },
-        { id: 2, name: 'Proposal 2', options: ['Option 1', 'Option 2', 'Option 3'] },
-        { id: 3, name: 'Proposal 3', options: ['Option 1', 'Option 2', 'Option 3'] },
-        { id: 1, name: 'Proposal 1', options: ['Option 1', 'Option 2', 'Option 3'] },
-        { id: 2, name: 'Proposal 2', options: ['Option 1', 'Option 2', 'Option 3'] },
-        { id: 3, name: 'Proposal 3', options: ['Option 1', 'Option 2', 'Option 3'] },
-      ];
-
-      setProposals(dummyProposals);
+          pub fun main(): [MajorityVoting.Proposal] {
+            return MajorityVoting.getProposals()
+          }
+          `
+        })
+        setProposals(proposal);
+        console.log("Got proposal")
+      } catch (error) {
+        console.error("Error fetching proposals:", error);
+      }
     };
 
     fetchProposals();
   }, []);
 
   const connectWallet = async () => {
-    // Connect the wallet logic here
+    // Connect wallet logic here
     // For example, using FCL's wallet connection code
+    await Header.connectWallet()
 
     // Dummy logic for demonstration purposes
     setWalletConnected(true);
@@ -70,7 +74,7 @@ const ProposalList = () => {
       <Header walletConnected={walletConnected} connectWallet={connectWallet} />
       <div className="proposal-list" style={styles.container}>
         <h2 style={styles.heading}>Proposal List</h2>
-        {walletConnected ? (
+        {user.loggedIn ? (
           creatingProposal ? (
             <div style={styles.createProposalCard}>
               <h3 style={styles.proposalName}>Create a Proposal</h3>
@@ -152,6 +156,7 @@ const ProposalList = () => {
     </div>
   );
 };
+
 
 const styles = {
   container: {
