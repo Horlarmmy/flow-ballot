@@ -60,6 +60,11 @@ We welcome contributions from the community to enhance and improve Flow Ballot. 
 
 We will review your contribution and work with you to merge it into the main repository.
 
+## Contract Details
+```
+https://flow-view-source.com/testnet/account/0x0487e1d4223c8002/contract/MajorityVoting
+```
+
 ## License
 
 [MIT License](LICENSE)
